@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import JIFFClient from 'jiff-mpc/lib/jiff-client';
-import { Button, Container, Form, Input, Card, CardContent, CardHeader } from 'semantic-ui-react';
+import { Button, Container, Form, Input, Card, CardContent, CardHeader, Message } from 'semantic-ui-react';
 import Compute from './Compute';
 import ComputeTable from './ComputeTable';
 
@@ -14,6 +14,8 @@ const Connect = () => {
         crypto_provider: true,
         party_count: parseInt(partyCount)
     });
+    const [myMessage, setMyMessage] = useState('');
+    const [hideComputeTable, setHideComputeTable] = useState(true);
     var saved_instance = null;
 
     /* const Compute = (jiff_instance) => {
@@ -40,7 +42,7 @@ const Connect = () => {
         return jiff_instance.open(sum);
     } */
 
-    const Connect = (url, computation_id) => {
+    const join = (url, computation_id) => {
         console.log('Connect' )
         var opt = {};
         opt.crypto_provider = true;
@@ -48,8 +50,9 @@ const Connect = () => {
         setSavedOptInState(opt)
         opt.onConnect = function () {
             console.log('connectedxxx')
+            setMyMessage(`${computationId} Session with ${partyCount} parties succesfully created! ` )
+            setHideComputeTable(false)
         };
-      
 
         // eslint-disable-next-line no-undef
         //JIFFClient = require('jiff-mpc/lib/jiff-client');
@@ -66,28 +69,31 @@ const Connect = () => {
         var computation_id = 'test';
         var party_count = 2;
     
-        Connect('http://localhost:8080', computation_id);
+        join('http://localhost:8080', computation_id);
       }
 
     const onSubmit2 =  (event) => {
         event.preventDefault();
         console.log('clicked')
-        var result = Compute(saved_instance);
+        savedInstanceInState.disconnect(false, true);
+        setMyMessage('')
+        setHideComputeTable(true)
+        /* var result = Compute(saved_instance);
         result
         .then(function (output) {
             console.log('output', output)
-        })
+        }) */
     }
 
   return (
     <div className="connect">
       <Container fluid>
-      <Card fluid >
+      <Card color="blue" fluid >
         <CardContent>
             <CardHeader>Create Session</CardHeader>
-            <Form>
+            <Form success={!!myMessage}>
                 <Form.Field>
-                    <Input style={{width: '60%', top: '10px', bottom: '10px', left: '20px', right: '20px'}}
+                    <Input style={{width: '80%', top: '10px', bottom: '10px', left: '20px', right: '20px'}}
                     label={{ basic: true, content: 'Session ID'}}
                     labelPosition='right' 
                     placeholder='Enter Session ID'
@@ -95,7 +101,7 @@ const Connect = () => {
                     onChange = {(event) => setComputationId(event.target.value)}/>
                 </Form.Field>
                 <Form.Field>
-                    <Input style={{width: '60%', top: '10px', bottom: '10px', left: '20px', right: '20px'}}
+                    <Input style={{width: '80%', top: '10px', bottom: '10px', left: '20px', right: '20px'}}
                     label={{ basic: true, content: 'Number of Parties'}}
                     labelPosition='right' 
                     placeholder='Enter Party Count'
@@ -103,15 +109,17 @@ const Connect = () => {
                     onChange = {(event) => setPartyCount(event.target.value)}
                     />
                 </Form.Field>
-                <div style={{ textAlign: 'right' }}>
+                <Message success header="Success" content={myMessage} />
+                <div style={{ textAlign: 'right', marginRight: '200px', marginTop: '30px' }}>
                 <Button primary type='submit' onClick={onSubmit}>Create</Button>
+                <Button primary type='submit' onClick={onSubmit2}>Disconnect</Button>
                 </div>
             </Form>
         </CardContent>
       </Card>
-      
-      <ComputeTable jiffInstance={savedInstanceInState} opt={savedOptInState} /> 
-      
+      {
+            hideComputeTable ? null : <ComputeTable jiffInstance={savedInstanceInState} opt={savedOptInState} /> 
+      }
       
       
       </Container>

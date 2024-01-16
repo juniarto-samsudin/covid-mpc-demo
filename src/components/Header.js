@@ -3,10 +3,10 @@ import { Header, Icon} from "semantic-ui-react";
 
 const PageHeader = (props) =>{
     return(    
-        <Header as='h3' style={{ marginTop: "30px" }}>
-            <Icon name='microchip' />
-            <Header.Content>MPC</Header.Content>
-            <Header.Subheader>Secret Sharing</Header.Subheader>
+        <Header as='h2' style={{ marginTop: "30px", marginBottom: "20px" }}>
+            <Icon name='hospital' size="huge"/>
+            <Header.Content>Covid Data Sharing Demo</Header.Content>
+            {/* <Header.Subheader>Covid Data</Header.Subheader> */}
         </Header>
     );
 };
