@@ -34,8 +34,10 @@ const CSVFileLoader = () => {
   return {
     jsx: (
     <div>
-      <h2>Secret Sharing Your Data</h2>
-      <CSVReader onFileLoaded={handleFile} />
+      <h3>Share Data</h3>
+      <div style={{marginTop: "20px", marginBottom: "20px"}}>
+        <CSVReader onFileLoaded={handleFile} />
+      </div>
       
       {csvData && (
         <div>

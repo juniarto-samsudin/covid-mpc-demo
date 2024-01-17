@@ -13,7 +13,8 @@ const ComputeTable = (props) => {
     const [resultModerate, setResultModerate] = useState('');
     const [resultCritical, setResultCritical] = useState('');
     const [resultDeath, setResultDeath] = useState('');
-   
+    const [hideResultChart, setHideResultChart] = useState(true);
+    const [hideComputeButton, setHideComputeButton] = useState(true);
     
 
     const  { jsx, value } = CSVFileLoader();
@@ -190,7 +191,7 @@ const ComputeTable = (props) => {
                 //setResultDict({...resultDict, death: result})
             });
 
-            
+            setHideComputeButton(false)
           })
         }
         /* // The MPC implementation should go *HERE*
@@ -294,6 +295,14 @@ const ComputeTable = (props) => {
         }) */
     }
 
+    const onComputeResult =  (event) => {
+        event.preventDefault();
+        console.log('ComputeResult')
+        console.log('jiffInstance: ', props.jiffInstance)
+        console.log('opt',props.opt)
+        setHideResultChart(false)
+    }
+
     resultDict = {
         mild: resultMild,
         moderate: resultModerate,
@@ -305,37 +314,37 @@ const ComputeTable = (props) => {
     var resultDictArray = [resultDict]
     return (
         <div>
-        {/* <CSVFileLoader />    
-        <Form>
-            <Form.Field>
-                <Input 
-                    label={{ basic: true, content: 'Number[between 1 - 100]'}}
-                    labelPosition='right' 
-                    placeholder='Enter an integer number [1 - 100]'
-                    value = {number} 
-                    onChange = {(event) => setNumber(event.target.value)}
-                />
-            </Form.Field>
-                <Button primary type='submit' onClick={onSubmit}>Compute</Button>
-        </Form> */}
+        
         <Card fluid>
         {jsx}
         <div style={{ textAlign: 'right', marginTop: '20px', marginBottom: '20px'}}>
             <Button primary type='submit' onClick={onSubmit}>Share</Button>
         </div>
         </Card>
-        {/* <p>Return value: {value}</p>: */}
+        
         
         <Card fluid>
-            <p>Return value: {resultAge} {resultMild} {resultModerate} {resultCritical} {resultDeath}</p>
-            {resultDict.mild &&  (
-                <div>
-                <BarChartExample data={resultDictArray} />    
-                {/* <ResultTable data={resultDictArray} /> */}
+            {
+                hideResultChart ?  null : (
+                <div>   
+                    <p>Return value: {resultAge} {resultMild} {resultModerate} {resultCritical} {resultDeath}</p>
+                    {resultDict.mild &&  (
+                        <div>
+                            <BarChartExample data={resultDictArray} />    
+                            {/* <ResultTable data={resultDictArray} /> */}
+                        </div>
+                    )}
                 </div>
-            )}
-            <Button primary type='submit' onClick={onSubmit}>Compute</Button>
+                )
+            }
+            {
+                hideComputeButton ? null :
+                <Button primary type='submit' onClick={onComputeResult}>Compute Result</Button>
+            }    
         </Card>
+        
+    
+
         </div>
     );
 }
