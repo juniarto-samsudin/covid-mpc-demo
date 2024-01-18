@@ -153,13 +153,76 @@ const ComputeTable = (props) => {
             }
       
             console.log('sumAgeColumnShare2: ', sumAgeColumnShare2)
-      
+
+
+            //processing sharedTable party 3
+            var AgeColumnShare3 = sharedTable[3].map(function (row) {
+                // Extract element 1,2,3,4 of each row - element 0 is age not used
+                return row[0] //mild, moderate, critical, death
+              });
+  
+              var MildColumnShare3 = sharedTable[3].map(function (row) {
+                  // Extract element 1,2,3,4 of each row - element 0 is age not used
+                  return row[1] //mild, moderate, critical, death
+              });
+  
+              var ModerateColumnShare3 = sharedTable[3].map(function (row) {
+                  // Extract element 1,2,3,4 of each row - element 0 is age not used
+                  return row[2] //mild, moderate, critical, death
+              });
+  
+              var CriticalColumnShare3 = sharedTable[3].map(function (row) {
+                  // Extract element 1,2,3,4 of each row - element 0 is age not used
+                  return row[3] //mild, moderate, critical, death
+              });
+  
+              var DeathColumnShare3 = sharedTable[3].map(function (row) {
+                  // Extract element 1,2,3,4 of each row - element 0 is age not used
+                  return row[4] //mild, moderate, critical, death
+              });
+  
+              console.log('resultShare3: ', AgeColumnShare3) // There are 6 Secret Shared Values,pertaining to 6 rows of column1 from Share 1
+              
+              var sumAgeColumnShare3 =  AgeColumnShare3[0] // row 1
+              for (var i = 1; i < AgeColumnShare3.length; i++) {
+                  sumAgeColumnShare3 = sumAgeColumnShare3.sadd(AgeColumnShare3[i]);
+              }
+  
+              var sumMildColumnShare3 =  MildColumnShare3[0] // row 1
+              for (var i = 1; i < MildColumnShare3.length; i++) {
+                  sumMildColumnShare3 = sumMildColumnShare3.sadd(MildColumnShare3[i]);
+              }
+  
+              var sumModerateColumnShare3 =  ModerateColumnShare3[0] // row 1
+              for (var i = 1; i < ModerateColumnShare3.length; i++) {
+                  sumModerateColumnShare3 = sumModerateColumnShare3.sadd(ModerateColumnShare3[i]);
+              }
+  
+              var sumCriticalColumnShare3 =  CriticalColumnShare3[0] // row 1
+              for (var i = 1; i < CriticalColumnShare3.length; i++) {
+                  sumCriticalColumnShare3 = sumCriticalColumnShare3.sadd(CriticalColumnShare3[i]);
+              }
+  
+              var sumDeathColumnShare3 =  DeathColumnShare3[0] // row 1
+              for (var i = 1; i < DeathColumnShare3.length; i++) {
+                  sumDeathColumnShare3 = sumDeathColumnShare3.sadd(DeathColumnShare3[i]);
+              }
+  
+              console.log('sumAgeColumnShare3: ', sumAgeColumnShare3)
+        
+              // processing sharedTable party 2
             // Sum of AgeColumnShare1 and AgeColumnShare2
             var sumAgeColumnShare = sumAgeColumnShare1.sadd(sumAgeColumnShare2);
             var sumMildColumnShare = sumMildColumnShare1.sadd(sumMildColumnShare2);
             var sumModerateColumnShare = sumModerateColumnShare1.sadd(sumModerateColumnShare2);
             var sumCriticalColumnShare = sumCriticalColumnShare1.sadd(sumCriticalColumnShare2);
             var sumDeathColumnShare = sumDeathColumnShare1.sadd(sumDeathColumnShare2);
+
+            var sumAgeColumnShare = sumAgeColumnShare.sadd(sumAgeColumnShare3);
+            var sumMildColumnShare = sumMildColumnShare.sadd(sumMildColumnShare3);
+            var sumModerateColumnShare = sumModerateColumnShare.sadd(sumModerateColumnShare3);
+            var sumCriticalColumnShare = sumCriticalColumnShare.sadd(sumCriticalColumnShare3);
+            var sumDeathColumnShare = sumDeathColumnShare.sadd(sumDeathColumnShare3);
       
             jiff_instance.open(sumAgeColumnShare).then(function (result) {
               console.log('Result:', result); // The final result after opening
