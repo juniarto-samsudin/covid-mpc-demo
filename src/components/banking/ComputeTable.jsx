@@ -5,6 +5,8 @@ import JIFFClient from 'jiff-mpc/lib/jiff-client';
 import CSVFileLoader from "./CSVFileLoader";
 import { ResultTable } from "./ResultTable";
 import BarChartExample from "./BarChartResult";
+import share from "jiff-mpc/lib/client/share";
+import { Share } from "next/font/google";
 
 const ComputeTable = (props) => {
     const [userId, setUserId] = useState('1');
@@ -53,71 +55,259 @@ const ComputeTable = (props) => {
 
         //From now on, all are secrets
         //Only userid 1 loan will be summed up
-        sharedTablePromise.then (function (allPartiesSecret) {
+        var sumLoanTotal
         var sumLoan1
-        var myUserId = parseInt(userId)
-        console.log('userId: ', myUserId)
-        var GetLoanShare1 = allPartiesSecret[1].map(function (row) {
-            // Extract user_id of each row
-            var result = row[0].ceq(parseInt(myUserId))
-            console.log('result: ', result)
-            jiff_instance.open(result).then(function (result) {
-              console.log('result final: ', result)
-              //1 is true user_id is 1, 0 is false user_id is not 1
-              if (result == 1) {
-                  console.log('result is 1 get sumLoan1')
-                  sumLoan1 = row[1]
-                  console.log('sumLoan1: ', sumLoan1)
-                  /* sumLoan1 {
-                      "ready": true,
-                      "value": 8157572,
-                      "holders": [
-                          1,
-                          2
-                      ],
-                      "threshold": 2,
-                      "Zp": 16777729
-                  } 
-                  jiff_instance.open(sumLoan1).then(function (result) {
-                      console.log('sumLoan1 : ', result) //10000 is the sum of loan of user_id 1
-                  });  */
-                  var GetLoanShare2 = allPartiesSecret[2].map(function (row) {
-                      var result = row[0].ceq(myUserId) //user_id is 1
-                      console.log('result2: ', result)
-                      jiff_instance.open(result).then(function (result) {
-                          console.log('result2 final: ', result)
-                          if (result == 1) {
-                              console.log('result2 is 1 get sumLoan2')
-                              var sumLoan2 = row[1]
-                              console.log('sumLoan2: ', sumLoan2)
-                              var sumLoan = sumLoan1.sadd(sumLoan2)
-                              console.log('sumLoan: ', sumLoan)
-                              jiff_instance.open(sumLoan).then(function (result) {
-                                  console.log('sumLoan Total : ', result) //10000 is the sum of loan of user_id 1
-                                  setTotalLoan(result)
-                                  setMyMessage('Data Successufully Shared')
-                                  setLoading(false)
-                                  setHideComputeButton(false)  
-                              }); 
-                          }
-                      })
-                  })
+        var sumLoan2
+        var sumLoan3
+        sharedTablePromise.then (function (allPartiesSecret) {
+            var myUserId = parseInt(userId)
+            console.log('userId: ', myUserId)
 
 
+            console.log('allPartiesSecret: ', allPartiesSecret)
+
+          
+
+
+            var GetLoanShare1 = allPartiesSecret[1].map(function (row) {
+                // Extract user_id of each row
+                var result = row[0].ceq(parseInt(myUserId))
+                console.log('result1: ', result)
+
+                jiff_instance.open(result).then(function (result) {
+                    if (result ==1){
+                        console.log('result is 1 get sumLoan1')
+                        sumLoan1 = row[1]
+                        console.log('sumLoan1: ', sumLoan1)
+                    }
+                })
+            }) 
+
+
+                
+                /* jiff_instance.open(result).then(function (result) {
+                    console.log('result final: ', result)
+                    //1 is true user_id is 1, 0 is false user_id is not 1
+                    if (result == 1) {
+                        console.log('result is 1 get sumLoan1')
+                        sumLoan1 = row[1]
+                        console.log('sumLoan1: ', sumLoan1)
+                        sumLoanTotal = sumLoan1
+
+                        var GetLoanShare2 = allPartiesSecret[2].map(function (row) {
+                            var result = row[0].ceq(myUserId) //user_id is 1
+                            console.log('result2: ', result)
+                            jiff_instance.open(result).then(function (result) {
+                                console.log('result2 final: ', result)
+                                if (result == 1) {
+                                    console.log('result2 is 1 get sumLoan2')
+                                    sumLoan2 = row[1]
+                                    console.log('sumLoan2: ', sumLoan2)
+
+                                    sumLoanTotal = sumLoanTotal.sadd(sumLoan2)
+                                    console.log('sumLoanTotal: ', sumLoanTotal)
+
+                                    var GetLoanShare3 = allPartiesSecret[3].map(function (row) {
+                                        var result = row[0].ceq(myUserId) //user_id is 1
+                                        console.log('result3: ', result)
+                                        jiff_instance.open(result).then(function (result3x) {
+                                            console.log('result3x final: ', result3x)
+                                            if (result3x == 1) {
+                                                console.log('result3x is 1 get sumLoan3')
+                                                var sumLoan3 = row[1]
+                                                console.log('sumLoan3: ', sumLoan3)
+                                                sumLoanTotal = sumLoanTotal.sadd(sumLoan3)
+                                                console.log('sumLoanTotal Final: ', sumLoanTotal)
+                                            }
+                                        })
+                                    }) //end of GetLoanShare3
+
+                                }
+                            })
+                        }) //end of GetLoanShare2
+                    }
+                }); */
+            //}); //end of GetLoanShare1
+
+            var GetLoanShare2 = allPartiesSecret[2].map(function (row) {
+                var result = row[0].ceq(parseInt(myUserId)) //user_id is 1 
+                console.log('result2: ', result)
+                jiff_instance.open(result).then(function (result) {
+                    if (result ==1){
+                        console.log('result is 1 get sumLoan2')
+                        sumLoan2 = row[1]
+                        console.log('sumLoan2: ', sumLoan2)
+                    }
+                })
+            })
+
+            var GetLoanShare3 = allPartiesSecret[3].map(function (row) {
+                var result = row[0].ceq(parseInt(myUserId)) //user_id is 1
+                console.log('result3: ', result)
+                jiff_instance.open(result).then(function (result) {
+                    if (result ==1){
+                        console.log('result is 1 get sumLoan3')
+                        sumLoan3 = row[1]
+                        console.log('sumLoan3: ', sumLoan3)
+                    }
+                })
+            })
+
+            function waitForSumLoan1() {
+                return new Promise((resolve) => {
+                  // Check if sumLoan1 has a value
+                  if (sumLoan1 !== undefined) {
+                    resolve(sumLoan1);
+                  } else {
+                    // If not, set up a watcher or some mechanism to update sumLoan1
+                    // For demonstration purposes, using a setInterval here
+                    const watcherInterval = setInterval(() => {
+                      if (sumLoan1 !== undefined) {
+                        clearInterval(watcherInterval);
+                        resolve(sumLoan1);
+                      }
+                    }, 100); // Check every 100 milliseconds
+                  }
+                });
               }
-            });
-          });
-        })
+
+              function waitForSumLoan2() {
+                return new Promise((resolve) => {
+                  // Check if sumLoan1 has a value
+                  if (sumLoan2 !== undefined) {
+                    resolve(sumLoan2);
+                  } else {
+                    // If not, set up a watcher or some mechanism to update sumLoan1
+                    // For demonstration purposes, using a setInterval here
+                    const watcherInterval = setInterval(() => {
+                      if (sumLoan2 !== undefined) {
+                        clearInterval(watcherInterval);
+                        resolve(sumLoan2);
+                      }
+                    }, 100); // Check every 100 milliseconds
+                  }
+                });
+              }
+
+              function waitForSumLoan3() {
+                return new Promise((resolve) => {
+                  // Check if sumLoan1 has a value
+                  if (sumLoan3 !== undefined) {
+                    resolve(sumLoan3);
+                  } else {
+                    // If not, set up a watcher or some mechanism to update sumLoan1
+                    // For demonstration purposes, using a setInterval here
+                    const watcherInterval = setInterval(() => {
+                      if (sumLoan3 !== undefined) {
+                        clearInterval(watcherInterval);
+                        resolve(sumLoan3);
+                      }
+                    }, 100); // Check every 100 milliseconds
+                  }
+                });
+              }
+
+              async function processSumLoan1() {
+                try {
+                  await waitForSumLoan1();
+                  await waitForSumLoan2();
+                  await waitForSumLoan3();
+                  console.log("Processing sumLoan1:", sumLoan1);
+                  console.log("Processing sumLoan2:", sumLoan2);
+                  console.log("Processing sumLoan3:", sumLoan3);
+
+                  sumLoanTotal = sumLoan1.sadd(sumLoan2)
+                  sumLoanTotal = sumLoanTotal.sadd(sumLoan3)
+                  console.log("Processing sumLoanTotal:", sumLoanTotal);
+                  jiff_instance.open(sumLoanTotal).then(function (result) {
+                    console.log('sumLoanTotal Final : ', result)
+                    setTotalLoan(result)
+                    setHideComputeButton(false)
+                    setLoading(false)
+                    setMyMessage('')
+                  });
+                  // Continue with your processing logic here
+                } catch (error) {
+                  console.error("Error:", error);
+                }
+              }
+
+              processSumLoan1();
+
+            
+           
+          
+
+
+           /*  for(var i = 0; i < allPartiesSecret[1].length; i++) {
+                console.log(allPartiesSecret[1][i][0])
+                console.log(allPartiesSecret[1][i][1])
+                var result = allPartiesSecret[1][i][0].ceq(parseInt(myUserId))
+                console.log('result: ', result)
+                var breakLoop1 = false
+                jiff_instance.open(result).then(function (result) {
+                    if (result == 1) {
+                       sumLoan1 = allPartiesSecret[1][i][1]
+                       console.log('sumLoan1: ', sumLoan1)
+                       sumLoanTotal = sumLoan1
+                       breakLoop1 = true
+                       for (var j = 0; j < allPartiesSecret[2].length; j++) {
+                            var result2 = allPartiesSecret[2][j][0].ceq(parseInt(myUserId))
+                            console.log('result2: ', result2)
+                            var breakLoop2 = false
+                            jiff_instance.open(result2).then(function (result2) {
+                                if (result2 == 1){
+                                    sumLoan2 = allPartiesSecret[2][j][1]
+                                    console.log('sumLoan2: ', sumLoan2)
+                                    sumLoanTotal = sumLoanTotal.sadd(sumLoan2)
+                                    breakLoop2 = true
+                                    for (var k = 0; k < allPartiesSecret[3].length; k++){
+                                        var result3 = allPartiesSecret[3][k][0].ceq(parseInt(myUserId))
+                                        console.log('result3: ', result3)
+                                        var breakLoop3 = false
+                                        jiff_instance.open(result3).then(function (result3) {
+                                            if (result3 == 1){
+                                                sumLoan3 = allPartiesSecret[3][k][1]
+                                                console.log('sumLoan3: ', sumLoan3)
+                                                sumLoanTotal = sumLoanTotal.sadd(sumLoan3)
+                                                console.log('sumLoanTotal Final: ', sumLoanTotal)
+                                                breakLoop3 = true
+                                            }
+                                        }) 
+                                        if (breakLoop3) {
+                                            break
+                                        }
+                                    }
+                                } //end of if result2        
+                            }) //end of jiff_instance.open(result2)
+                            if (breakLoop2) {
+                                break
+                            }
+
+                       } //end of for loop allPartiesSecret[2]
+                    }
+                })
+                if (breakLoop1) {
+                    break
+                }
+
+            } //end of for loop allPartiesSecret[1] */
+                   
+        }) //end of sharedTablePromise
+
+        
+    } //end of getSharedTablePromise
+            
 
         //setHideComputeButton(false)
         //return sharedTablePromise
-    }
+    
 
     const Compute2 = (jiff_instance, opt) => {
         console.log('ComputeArray')
         if (jiff_instance == null) {
             jiff_instance = saved_instance;
-        }
+        }jiff_instance
 
         var valueJson = JSON.parse(value)
 
