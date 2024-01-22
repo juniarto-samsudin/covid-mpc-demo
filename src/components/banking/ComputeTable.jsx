@@ -23,7 +23,7 @@ const ComputeTable = (props) => {
     const [totalLoan, setTotalLoan] = useState(0);
     const [finalResult, setFinalResult] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [sumTotalLoanState, setSumTotalLoanState] = useState({});
+    const [sumTotalLoanState, setSumTotalLoanState] = useState([]);
     const [final1, setFinal1] = useState(0);
     const [final2, setFinal2] = useState(0);
     const [final3, setFinal3] = useState(0);
@@ -236,24 +236,24 @@ const ComputeTable = (props) => {
                     console.log("Processing sumLoanTotal:", sumLoanTotal[i]);
                   }
                   console.log('sumLoanTotal in processSumLoan1: ', sumLoanTotal)
-                  //setSumTotalLoanState(sumLoanTotal)
-             
-                  jiff_instance.open(sumLoanTotal[0]).then(function (result) {
-                    console.log('sumLoanTotal Final : ', result)
-                    setFinal1(result) 
-                  });
-                  jiff_instance.open(sumLoanTotal[1]).then(function (result) {
-                    console.log('sumLoanTotal Final : ', result)
-                    setFinal2(result)
-                  });
-                  jiff_instance.open(sumLoanTotal[2]).then(function (result) {
-                    console.log('sumLoanTotal Final : ', result)
-                    setFinal3(result)
-                  }); 
+                 
+                  const result1 = await jiff_instance.open(sumLoanTotal[0])
+                  const result2 = await jiff_instance.open(sumLoanTotal[1])
+                  const result3 = await jiff_instance.open(sumLoanTotal[2])
+
+                  const waitAll = async () => {
+                       await Promise.all([result1, result2, result3])
+                       console.log('result1: ', result1)
+                       console.log('result2: ', result2)
+                       console.log('result3: ', result3)
+                       setSumTotalLoanState([result1, result2, result3])
+                       setHideComputeButton(false)
+                       setLoading(false)
+                       setMyMessage('') 
+                  }
+
+                  waitAll()
                   
-                  setHideComputeButton(false)
-                  setLoading(false)
-                  setMyMessage('')
 
                   // Continue with your processing logic here
                 } catch (error) {
@@ -530,19 +530,14 @@ const ComputeTable = (props) => {
         //console.log('jiffInstance: ', props.jiffInstance)
         //console.log('opt',props.opt)
         console.log('userId in ComputeResult: ', userId)
-        //console.log('sumTotalLoanState in ComputeResult: ', sumTotalLoanState)
-        console.log('final1 in ComputeResult: ', final1)
-        console.log('final2 in ComputeResult: ', final2)
-        console.log('final3 in ComputeResult: ', final3)
+        console.log('sumTotalLoanState in ComputeResult: ', sumTotalLoanState)
         if (userId == 1){
-            setFinalResult(final1)
+            setFinalResult(sumTotalLoanState[0])
         } else if (userId == 2){
-            setFinalResult(final2)
+            setFinalResult(sumTotalLoanState[1])
         } else if (userId == 3){
-            setFinalResult(final3)
+            setFinalResult(sumTotalLoanState[2])
         }
-        //setFinalResult(totalLoan)
-        //setHideResultChart(false)
     }
 
     
