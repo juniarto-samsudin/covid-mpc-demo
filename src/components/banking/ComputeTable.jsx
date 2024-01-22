@@ -11,6 +11,7 @@ import { Share } from "next/font/google";
 const ComputeTable = (props) => {
     const [userId, setUserId] = useState('1');
     const [myMessage, setMyMessage] = useState('');
+    const [myMessage1, setMyMessage1] = useState('');
     //const [resultAge, setResultAge] = useState('');
     //const [resultMild, setResultMild] = useState('');
     //const [resultModerate, setResultModerate] = useState('');
@@ -22,6 +23,11 @@ const ComputeTable = (props) => {
     const [totalLoan, setTotalLoan] = useState(0);
     const [finalResult, setFinalResult] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [sumTotalLoanState, setSumTotalLoanState] = useState({});
+    const [final1, setFinal1] = useState(0);
+    const [final2, setFinal2] = useState(0);
+    const [final3, setFinal3] = useState(0);
+
     
 
     const  { jsx, value } = CSVFileLoader();
@@ -55,13 +61,14 @@ const ComputeTable = (props) => {
 
         //From now on, all are secrets
         //Only userid 1 loan will be summed up
-        var sumLoanTotal
-        var sumLoan1
-        var sumLoan2
-        var sumLoan3
+        var sumLoanTotal=[]
+        var sumLoan1=[]
+        var sumLoan2=[]
+        var sumLoan3=[]
+        var myUserId = [1,2,3]
         sharedTablePromise.then (function (allPartiesSecret) {
-            var myUserId = parseInt(userId)
-            console.log('userId: ', myUserId)
+            //var myUserId = parseInt(userId)
+            //console.log('userId: ', myUserId)
 
 
             console.log('allPartiesSecret: ', allPartiesSecret)
@@ -71,16 +78,19 @@ const ComputeTable = (props) => {
 
             var GetLoanShare1 = allPartiesSecret[1].map(function (row) {
                 // Extract user_id of each row
-                var result = row[0].ceq(parseInt(myUserId))
-                console.log('result1: ', result)
+                for (let i=0; i<myUserId.length; i++){
+                    var result = row[0].ceq(myUserId[i])
+                    console.log('result1: ', result)
 
-                jiff_instance.open(result).then(function (result) {
-                    if (result ==1){
-                        console.log('result is 1 get sumLoan1')
-                        sumLoan1 = row[1]
-                        console.log('sumLoan1: ', sumLoan1)
-                    }
-                })
+                    jiff_instance.open(result).then(function (result) {
+                        if (result ==1){
+                            console.log('result is 1 get sumLoan1')
+                            sumLoan1.push(row[1])
+                            console.log('sumLoan1: ', sumLoan1)
+
+                        }
+                    })
+                }
             }) 
 
 
@@ -130,39 +140,43 @@ const ComputeTable = (props) => {
             //}); //end of GetLoanShare1
 
             var GetLoanShare2 = allPartiesSecret[2].map(function (row) {
-                var result = row[0].ceq(parseInt(myUserId)) //user_id is 1 
-                console.log('result2: ', result)
-                jiff_instance.open(result).then(function (result) {
+                for (let i=0; i<myUserId.length; i++){
+                    var result = row[0].ceq(myUserId[i]) //user_id is 1 
+                    console.log('result2: ', result)
+                    jiff_instance.open(result).then(function (result) {
                     if (result ==1){
                         console.log('result is 1 get sumLoan2')
-                        sumLoan2 = row[1]
+                        sumLoan2.push(row[1])
                         console.log('sumLoan2: ', sumLoan2)
                     }
                 })
+                }
             })
 
             var GetLoanShare3 = allPartiesSecret[3].map(function (row) {
-                var result = row[0].ceq(parseInt(myUserId)) //user_id is 1
-                console.log('result3: ', result)
-                jiff_instance.open(result).then(function (result) {
+                for (let i=0; i<myUserId.length; i++){
+                    var result = row[0].ceq(myUserId[i]) //user_id is 1
+                    console.log('result3: ', result)
+                    jiff_instance.open(result).then(function (result) {
                     if (result ==1){
                         console.log('result is 1 get sumLoan3')
-                        sumLoan3 = row[1]
+                        sumLoan3.push(row[1])
                         console.log('sumLoan3: ', sumLoan3)
                     }
                 })
+                }
             })
 
             function waitForSumLoan1() {
                 return new Promise((resolve) => {
                   // Check if sumLoan1 has a value
-                  if (sumLoan1 !== undefined) {
+                  if (sumLoan1.length >= 3) {
                     resolve(sumLoan1);
                   } else {
                     // If not, set up a watcher or some mechanism to update sumLoan1
                     // For demonstration purposes, using a setInterval here
                     const watcherInterval = setInterval(() => {
-                      if (sumLoan1 !== undefined) {
+                      if (sumLoan1.length >= 3) {
                         clearInterval(watcherInterval);
                         resolve(sumLoan1);
                       }
@@ -174,13 +188,13 @@ const ComputeTable = (props) => {
               function waitForSumLoan2() {
                 return new Promise((resolve) => {
                   // Check if sumLoan1 has a value
-                  if (sumLoan2 !== undefined) {
+                  if (sumLoan2.length >= 3) {
                     resolve(sumLoan2);
                   } else {
                     // If not, set up a watcher or some mechanism to update sumLoan1
                     // For demonstration purposes, using a setInterval here
                     const watcherInterval = setInterval(() => {
-                      if (sumLoan2 !== undefined) {
+                      if (sumLoan2.length >= 3) {
                         clearInterval(watcherInterval);
                         resolve(sumLoan2);
                       }
@@ -192,13 +206,13 @@ const ComputeTable = (props) => {
               function waitForSumLoan3() {
                 return new Promise((resolve) => {
                   // Check if sumLoan1 has a value
-                  if (sumLoan3 !== undefined) {
+                  if (sumLoan3.length >= 3) {
                     resolve(sumLoan3);
                   } else {
                     // If not, set up a watcher or some mechanism to update sumLoan1
                     // For demonstration purposes, using a setInterval here
                     const watcherInterval = setInterval(() => {
-                      if (sumLoan3 !== undefined) {
+                      if (sumLoan3.length >= 3) {
                         clearInterval(watcherInterval);
                         resolve(sumLoan3);
                       }
@@ -216,16 +230,31 @@ const ComputeTable = (props) => {
                   console.log("Processing sumLoan2:", sumLoan2);
                   console.log("Processing sumLoan3:", sumLoan3);
 
-                  sumLoanTotal = sumLoan1.sadd(sumLoan2)
-                  sumLoanTotal = sumLoanTotal.sadd(sumLoan3)
-                  console.log("Processing sumLoanTotal:", sumLoanTotal);
-                  jiff_instance.open(sumLoanTotal).then(function (result) {
+                  for (let i=0; i<3; i++){
+                    sumLoanTotal[i] = sumLoan1[i].sadd(sumLoan2[i])
+                    sumLoanTotal[i] = sumLoanTotal[i].sadd(sumLoan3[i])
+                    console.log("Processing sumLoanTotal:", sumLoanTotal[i]);
+                  }
+                  console.log('sumLoanTotal in processSumLoan1: ', sumLoanTotal)
+                  //setSumTotalLoanState(sumLoanTotal)
+             
+                  jiff_instance.open(sumLoanTotal[0]).then(function (result) {
                     console.log('sumLoanTotal Final : ', result)
-                    setTotalLoan(result)
-                    setHideComputeButton(false)
-                    setLoading(false)
-                    setMyMessage('')
+                    setFinal1(result) 
                   });
+                  jiff_instance.open(sumLoanTotal[1]).then(function (result) {
+                    console.log('sumLoanTotal Final : ', result)
+                    setFinal2(result)
+                  });
+                  jiff_instance.open(sumLoanTotal[2]).then(function (result) {
+                    console.log('sumLoanTotal Final : ', result)
+                    setFinal3(result)
+                  }); 
+                  
+                  setHideComputeButton(false)
+                  setLoading(false)
+                  setMyMessage('')
+
                   // Continue with your processing logic here
                 } catch (error) {
                   console.error("Error:", error);
@@ -492,15 +521,27 @@ const ComputeTable = (props) => {
             setAllPartiesSecret(output)
         }) */
     }
-
+    
     const onComputeResult =  (event) => {
         event.preventDefault();
         console.log('ComputeResult')
         //const result = getSharedTablePromise(props.jiffInstance, props.opt);
         //calculateFinalResult(props.jiffInstance, props.opt);
-        console.log('jiffInstance: ', props.jiffInstance)
-        console.log('opt',props.opt)
-        setFinalResult(totalLoan)
+        //console.log('jiffInstance: ', props.jiffInstance)
+        //console.log('opt',props.opt)
+        console.log('userId in ComputeResult: ', userId)
+        //console.log('sumTotalLoanState in ComputeResult: ', sumTotalLoanState)
+        console.log('final1 in ComputeResult: ', final1)
+        console.log('final2 in ComputeResult: ', final2)
+        console.log('final3 in ComputeResult: ', final3)
+        if (userId == 1){
+            setFinalResult(final1)
+        } else if (userId == 2){
+            setFinalResult(final2)
+        } else if (userId == 3){
+            setFinalResult(final3)
+        }
+        //setFinalResult(totalLoan)
         //setHideResultChart(false)
     }
 
@@ -514,14 +555,7 @@ const ComputeTable = (props) => {
                         <Card color="blue" fluid >
                             <CardContent>   
                                 <Form success={!!myMessage}>
-                                    <Form.Field>
-                                        <Input style={{width: '80%', top: '10px', bottom: '30px', left: '20px', right: '20px'}}
-                                        label={{ basic: true, content: 'User ID to Query'}}
-                                        labelPosition='right' 
-                                        placeholder='Enter User ID'
-                                        value = {userId}
-                                        onChange = {(event) => setUserId(event.target.value)}/>
-                                    </Form.Field>
+                                    
                                     <div style={{ textAlign: 'right', marginRight: '200px', marginTop: '30px' , marginBottom: '20px' }}>
                                         {
                                             loading ? <Button loading primary>Loading</Button> : <Button primary type='submit' onClick={onSubmit}>Share</Button>
@@ -544,6 +578,15 @@ const ComputeTable = (props) => {
                     <Container fluid>
                         <Card color="blue" fluid >
                         <CardContent>
+                        <Form success={!!myMessage1}>
+                        <Form.Field>
+                            <Input style={{width: '80%', top: '10px', bottom: '30px', left: '20px', right: '20px'}}
+                                label={{ basic: true, content: 'User ID to Query'}}
+                                labelPosition='right' 
+                                placeholder='Enter User ID'
+                                value = {userId}
+                                onChange = {(event) => setUserId(event.target.value)}/>
+                        </Form.Field>
                         <Input style={{width: '80%', top: '10px', bottom: '30px', left: '20px', right: '20px'}}
                                         label={{ basic: true, content: 'Total Loan'}}
                                         labelPosition='right' 
@@ -553,6 +596,7 @@ const ComputeTable = (props) => {
                         <div style={{ textAlign: 'right', marginRight: '200px', marginTop: '30px' , marginBottom: '20px' }}>
                             <Button primary type='submit' onClick={onComputeResult}>Compute Result</Button>
                         </div>
+                        </Form>
                         </CardContent>
                         </Card>
                     </Container>
