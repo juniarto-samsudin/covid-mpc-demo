@@ -47,6 +47,7 @@ const Connect = () => {
         opt.crypto_provider = true;
         opt.party_count = parseInt(partyCount);
         setSavedOptInState(opt)
+        setMyMessage('Waiting for parties to connect...')
         opt.onConnect = function () {
             console.log('connectedxxx')
             setMyMessage(`${computationId} Session with ${partyCount} parties succesfully created! ` )

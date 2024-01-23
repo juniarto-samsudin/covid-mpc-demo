@@ -93,52 +93,6 @@ const ComputeTable = (props) => {
                 }
             }) 
 
-
-                
-                /* jiff_instance.open(result).then(function (result) {
-                    console.log('result final: ', result)
-                    //1 is true user_id is 1, 0 is false user_id is not 1
-                    if (result == 1) {
-                        console.log('result is 1 get sumLoan1')
-                        sumLoan1 = row[1]
-                        console.log('sumLoan1: ', sumLoan1)
-                        sumLoanTotal = sumLoan1
-
-                        var GetLoanShare2 = allPartiesSecret[2].map(function (row) {
-                            var result = row[0].ceq(myUserId) //user_id is 1
-                            console.log('result2: ', result)
-                            jiff_instance.open(result).then(function (result) {
-                                console.log('result2 final: ', result)
-                                if (result == 1) {
-                                    console.log('result2 is 1 get sumLoan2')
-                                    sumLoan2 = row[1]
-                                    console.log('sumLoan2: ', sumLoan2)
-
-                                    sumLoanTotal = sumLoanTotal.sadd(sumLoan2)
-                                    console.log('sumLoanTotal: ', sumLoanTotal)
-
-                                    var GetLoanShare3 = allPartiesSecret[3].map(function (row) {
-                                        var result = row[0].ceq(myUserId) //user_id is 1
-                                        console.log('result3: ', result)
-                                        jiff_instance.open(result).then(function (result3x) {
-                                            console.log('result3x final: ', result3x)
-                                            if (result3x == 1) {
-                                                console.log('result3x is 1 get sumLoan3')
-                                                var sumLoan3 = row[1]
-                                                console.log('sumLoan3: ', sumLoan3)
-                                                sumLoanTotal = sumLoanTotal.sadd(sumLoan3)
-                                                console.log('sumLoanTotal Final: ', sumLoanTotal)
-                                            }
-                                        })
-                                    }) //end of GetLoanShare3
-
-                                }
-                            })
-                        }) //end of GetLoanShare2
-                    }
-                }); */
-            //}); //end of GetLoanShare1
-
             var GetLoanShare2 = allPartiesSecret[2].map(function (row) {
                 for (let i=0; i<myUserId.length; i++){
                     var result = row[0].ceq(myUserId[i]) //user_id is 1 
@@ -167,68 +121,36 @@ const ComputeTable = (props) => {
                 }
             })
 
-            function waitForSumLoan1() {
+            var sumLoanAll = []
+            function waitForAllSumLoan() {
                 return new Promise((resolve) => {
-                  // Check if sumLoan1 has a value
-                  if (sumLoan1.length >= 3) {
-                    resolve(sumLoan1);
-                  } else {
-                    // If not, set up a watcher or some mechanism to update sumLoan1
-                    // For demonstration purposes, using a setInterval here
-                    const watcherInterval = setInterval(() => {
-                      if (sumLoan1.length >= 3) {
-                        clearInterval(watcherInterval);
-                        resolve(sumLoan1);
-                      }
-                    }, 100); // Check every 100 milliseconds
-                  }
-                });
-              }
+                    if (sumLoan1.length >= 3 && sumLoan2.length >= 3 && sumLoan3.length >= 3) {
+                        sumLoanAll = [sumLoan1, sumLoan2, sumLoan3]
+                        resolve(sumLoanAll);
+                    } else {
+                        // If not, set up a watcher or some mechanism to update sumLoan1
+                        // For demonstration purposes, using a setInterval here
+                        const watcherInterval = setInterval(() => {
+                            if (sumLoan1.length >= 3 && sumLoan2.length >= 3 && sumLoan3.length >= 3) {
+                                clearInterval(watcherInterval);
+                                sumLoanAll = [sumLoan1, sumLoan2, sumLoan3]
+                                resolve(sumLoanAll);
+                            }
+                        }, 100); // Check every 100 milliseconds
+                    }
+                })
+            }
 
-              function waitForSumLoan2() {
-                return new Promise((resolve) => {
-                  // Check if sumLoan1 has a value
-                  if (sumLoan2.length >= 3) {
-                    resolve(sumLoan2);
-                  } else {
-                    // If not, set up a watcher or some mechanism to update sumLoan1
-                    // For demonstration purposes, using a setInterval here
-                    const watcherInterval = setInterval(() => {
-                      if (sumLoan2.length >= 3) {
-                        clearInterval(watcherInterval);
-                        resolve(sumLoan2);
-                      }
-                    }, 100); // Check every 100 milliseconds
-                  }
-                });
-              }
-
-              function waitForSumLoan3() {
-                return new Promise((resolve) => {
-                  // Check if sumLoan1 has a value
-                  if (sumLoan3.length >= 3) {
-                    resolve(sumLoan3);
-                  } else {
-                    // If not, set up a watcher or some mechanism to update sumLoan1
-                    // For demonstration purposes, using a setInterval here
-                    const watcherInterval = setInterval(() => {
-                      if (sumLoan3.length >= 3) {
-                        clearInterval(watcherInterval);
-                        resolve(sumLoan3);
-                      }
-                    }, 100); // Check every 100 milliseconds
-                  }
-                });
-              }
 
               async function processSumLoan1() {
                 try {
-                  await waitForSumLoan1();
-                  await waitForSumLoan2();
-                  await waitForSumLoan3();
-                  console.log("Processing sumLoan1:", sumLoan1);
-                  console.log("Processing sumLoan2:", sumLoan2);
-                  console.log("Processing sumLoan3:", sumLoan3);
+                  
+                  await waitForAllSumLoan();
+                  console.log("Processing sumLoanAll:", sumLoanAll);
+
+                  sumLoan1 = sumLoanAll[0]
+                  sumLoan2 = sumLoanAll[1]
+                  sumLoan3 = sumLoanAll[2]
 
                   for (let i=0; i<3; i++){
                     sumLoanTotal[i] = sumLoan1[i].sadd(sumLoan2[i])
@@ -262,65 +184,6 @@ const ComputeTable = (props) => {
               }
 
               processSumLoan1();
-
-            
-           
-          
-
-
-           /*  for(var i = 0; i < allPartiesSecret[1].length; i++) {
-                console.log(allPartiesSecret[1][i][0])
-                console.log(allPartiesSecret[1][i][1])
-                var result = allPartiesSecret[1][i][0].ceq(parseInt(myUserId))
-                console.log('result: ', result)
-                var breakLoop1 = false
-                jiff_instance.open(result).then(function (result) {
-                    if (result == 1) {
-                       sumLoan1 = allPartiesSecret[1][i][1]
-                       console.log('sumLoan1: ', sumLoan1)
-                       sumLoanTotal = sumLoan1
-                       breakLoop1 = true
-                       for (var j = 0; j < allPartiesSecret[2].length; j++) {
-                            var result2 = allPartiesSecret[2][j][0].ceq(parseInt(myUserId))
-                            console.log('result2: ', result2)
-                            var breakLoop2 = false
-                            jiff_instance.open(result2).then(function (result2) {
-                                if (result2 == 1){
-                                    sumLoan2 = allPartiesSecret[2][j][1]
-                                    console.log('sumLoan2: ', sumLoan2)
-                                    sumLoanTotal = sumLoanTotal.sadd(sumLoan2)
-                                    breakLoop2 = true
-                                    for (var k = 0; k < allPartiesSecret[3].length; k++){
-                                        var result3 = allPartiesSecret[3][k][0].ceq(parseInt(myUserId))
-                                        console.log('result3: ', result3)
-                                        var breakLoop3 = false
-                                        jiff_instance.open(result3).then(function (result3) {
-                                            if (result3 == 1){
-                                                sumLoan3 = allPartiesSecret[3][k][1]
-                                                console.log('sumLoan3: ', sumLoan3)
-                                                sumLoanTotal = sumLoanTotal.sadd(sumLoan3)
-                                                console.log('sumLoanTotal Final: ', sumLoanTotal)
-                                                breakLoop3 = true
-                                            }
-                                        }) 
-                                        if (breakLoop3) {
-                                            break
-                                        }
-                                    }
-                                } //end of if result2        
-                            }) //end of jiff_instance.open(result2)
-                            if (breakLoop2) {
-                                break
-                            }
-
-                       } //end of for loop allPartiesSecret[2]
-                    }
-                })
-                if (breakLoop1) {
-                    break
-                }
-
-            } //end of for loop allPartiesSecret[1] */
                    
         }) //end of sharedTablePromise
 
@@ -582,16 +445,17 @@ const ComputeTable = (props) => {
                                 value = {userId}
                                 onChange = {(event) => setUserId(event.target.value)}/>
                         </Form.Field>
-                        <Input style={{width: '80%', top: '10px', bottom: '30px', left: '20px', right: '20px'}}
-                                        label={{ basic: true, content: 'Total Loan'}}
-                                        labelPosition='right' 
-                                        placeholder='Enter User ID'
-                                        value = {finalResult}/>
-                        
                         <div style={{ textAlign: 'right', marginRight: '200px', marginTop: '30px' , marginBottom: '20px' }}>
                             <Button primary type='submit' onClick={onComputeResult}>Compute Result</Button>
                         </div>
                         </Form>
+                        {/* <Input style={{width: '80%', top: '10px', bottom: '30px', left: '20px', right: '20px'}}
+                                        label={{ basic: true, content: 'Total Loan'}}
+                                        labelPosition='right' 
+                                        placeholder='Enter User ID'
+                                        value = {finalResult}/> */}
+                                        <Input disabled style={{width: '50%', top: '10px', bottom: '30px', left: '20px', right: '20px'}} 
+                                                label="Total Loan" size="huge" value = {finalResult} />
                         </CardContent>
                         </Card>
                     </Container>
