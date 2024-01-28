@@ -10,7 +10,7 @@ const Layout = (props) => {
  return (
    <>
    <Container>
-       <PageHeader children=""/>
+       <PageHeader children="" name={props.name}/>
        {props.children}
    </Container>
 
