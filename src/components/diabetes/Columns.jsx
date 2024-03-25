@@ -1,9 +1,9 @@
 export const COLUMNS = [
     {
-        Header: 'user_id',
-        accessor: 'user_id'
+        Header: 'no',
+        accessor: 'no'
     },{
-        Header: 'loan',
-        accessor: 'loan'
+        Header: 'glucose',
+        accessor: 'glucose'
     }
 ]

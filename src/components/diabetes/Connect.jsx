@@ -7,13 +7,14 @@ import ComputeTable from './ComputeTable';
 //import config from 'config';
 
 var myConfig;
-var __jiff_instance
+var __jiff_instance;
+var opt;
 
 const mpcConnect = function (hostname, computation_id, options, _config) {
     var config = _config;
     console.log('inside mpcConnect')
     console.log('config:', config)
-    var opt = Object.assign({}, options);
+    opt = Object.assign({}, options);
     opt['crypto_provider'] = config.preprocessing === false;
     opt['initialization'] = { role: 'input' };
     opt['party_count'] = config.party_count;
@@ -169,6 +170,7 @@ const Connect = () => {
                 var jiff = mpcConnect(hostname, computationId, options, myConfig);
                 jiff.wait_for(myConfig.compute_parties, function () {
                     console.log('Connected to the computation parties');
+                    setHideComputeTable(false)
                 })
             })
             .catch(error => {

@@ -42,6 +42,10 @@ const ComputeTable = (props) => {
 
     let getSharedTablePromise = (jiff_instance, opt) => {
         console.log('Calculating sharedTablePromise')
+    }
+    
+    let getSharedTablePromiseOri = (jiff_instance, opt) => {
+        console.log('Calculating sharedTablePromise')
         if (jiff_instance == null) {
             jiff_instance = saved_instance;
         }
