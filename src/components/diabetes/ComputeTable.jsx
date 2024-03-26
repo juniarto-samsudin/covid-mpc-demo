@@ -27,6 +27,7 @@ const ComputeTable = (props) => {
     const [final1, setFinal1] = useState(0);
     const [final2, setFinal2] = useState(0);
     const [final3, setFinal3] = useState(0);
+    const [hideResult, setHideResult] = useState(true);
 
     
 
@@ -40,8 +41,35 @@ const ComputeTable = (props) => {
         console.log('calculateFinalResutl totalLoan: ', totalLoan)
     }
 
-    let getSharedTablePromise = (jiff_instance, opt) => {
+    let getSharedTablePromise = (jiff_instance, opt, config) => {
         console.log('Calculating sharedTablePromise')
+        var valueJson = JSON.parse(value)
+        console.log('valueJson: ', valueJson)
+
+        var tableToShare = valueJson.map(item => [
+            parseInt(item.no),
+            parseInt(item.glucose),
+        ])
+
+        //[
+        //    [1, 1000],
+        //    [2, 2000]
+        //]
+        console.log('tableToShare: ', tableToShare)
+        jiff_instance.share(tableToShare[0][0], null, config.compute_parties, config.input_parties);
+
+        // If this party is still connected after the compute parties are done, it will
+        // receive the result.
+        var promise = jiff_instance.receive_open(config.compute_parties);
+        promise.then(function (output) {
+            console.log('getSharedTablePromise output: ', output)
+            setHideResult(false)
+            setMyMessage('')
+            setLoading(false)
+            setFinalResult(output)
+            jiff_instance.disconnect(true, true);
+        });
+
     }
     
     let getSharedTablePromiseOri = (jiff_instance, opt) => {
@@ -373,7 +401,7 @@ const ComputeTable = (props) => {
         console.log('Compute')
         console.log('jiffInstance: ', props.jiffInstance)
         console.log('opt',props.opt)
-        const result = getSharedTablePromise(props.jiffInstance, props.opt);
+        const result = getSharedTablePromise(props.jiffInstance, props.opt, props.config);
         setMyMessage('Sharing Secrets ... Please wait.') //reset message
         setLoading(true)
         setHideComputeButton(true)
@@ -422,6 +450,11 @@ const ComputeTable = (props) => {
                                         {
                                             loading ? <Button loading primary>Loading</Button> : <Button primary type='submit' onClick={onSubmit}>Share</Button>
                                         } 
+                                    </div>
+                                    <div style={{ textAlign: 'right', marginRight: '200px', marginTop: '30px' , marginBottom: '20px'}}>
+                                        {
+                                            hideResult? null : <p>{finalResult}</p>
+                                        }
                                     </div>
                                     <Message success header="Info:" content={myMessage} />
                                 </Form>

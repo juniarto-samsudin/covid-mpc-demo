@@ -41,16 +41,20 @@ var jiffClient = new JIFFClient('http://localhost:8080', computation_id, {
 // the computation code
 var compute = function () {
   jiffClient.wait_for(all_parties, function () {
+    console.log('All parties are connected! We are ready to start the computation!');
     // We are a compute party, we do not have any input (thus secret is null),
     // we will receive shares of inputs from all the input_parties.
     var shares = jiffClient.share(null, null, config.compute_parties, config.input_parties);
+    console.log('Shares: ', shares);
 
     var sum = shares[config.input_parties[0]];
     for (var i = 1; i < config.input_parties.length; i++) {
+      console.log('Adding share from party: ', config.input_parties[i])
       var p = config.input_parties[i];
       sum = sum.sadd(shares[p]);
-    }
+    } // being processed as a promise
 
+    // will only be processed after all shares are received
     jiffClient.open(sum, all_parties).then(function (output) {
       console.log('Final output is: ', output);
       jiffClient.disconnect(true, true);
@@ -66,6 +70,7 @@ jiffClient.wait_for(config.compute_parties, function () {
     jiffClient.executePreprocessing(compute.bind(null, jiffClient));
   } else {
     // no preprocessing: use server as crypto provider
+    console.log('Client is ready, about to compute!')
     compute();
   }
 });

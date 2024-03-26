@@ -10,47 +10,6 @@ var myConfig;
 var __jiff_instance;
 var opt;
 
-const mpcConnect = function (hostname, computation_id, options, _config) {
-    var config = _config;
-    console.log('inside mpcConnect')
-    console.log('config:', config)
-    opt = Object.assign({}, options);
-    opt['crypto_provider'] = config.preprocessing === false;
-    opt['initialization'] = { role: 'input' };
-    opt['party_count'] = config.party_count;
-    opt['autoConnect'] = false;
-
-    // eslint-disable-next-line no-undef
-    __jiff_instance = new JIFFClient(hostname, computation_id, opt);
-    // eslint-disable-next-line no-undef
-    __jiff_instance.apply_extension(jiff_restAPI);
-    __jiff_instance.connect();
-    return __jiff_instance;
-  };
-  
-  
-const mpcCompute = function (input, jiff_instance_) {
-    console.log('inside mpcCompute')
-    var jiff_instance = __jiff_instance;
-    if (jiff_instance_) {
-      jiff_instance = jiff_instance_;
-    }
-    var config = myConfig;
-    // Share with compute parties
-    console.log(jiff_instance)
-    jiff_instance.share(input, null, config.compute_parties, config.input_parties);
-
-    // If this party is still connected after the compute parties are done, it will
-    // receive the result.
-    var promise = jiff_instance.receive_open(config.compute_parties);
-    promise.then(function () {
-      jiff_instance.disconnect(true, true);
-    });
-
-    return promise;
-  };
-
-
 const Connect = () => {
     const [computationId, setComputationId] = useState('');
     const [partyCount, setPartyCount] = useState('');
@@ -87,6 +46,55 @@ const Connect = () => {
         // Return a promise to the final output(s)
         return jiff_instance.open(sum);
     } */
+
+
+const mpcConnect = function (hostname, computation_id, options, _config) {
+    var config = _config;
+    console.log('inside mpcConnect')
+    console.log('config:', config)
+    opt = Object.assign({}, options);
+    opt['crypto_provider'] = config.preprocessing === false;
+    opt['initialization'] = { role: 'input' };
+    opt['party_count'] = config.party_count;
+    opt['autoConnect'] = false;
+    setSavedOptInState(opt)
+    opt.onConnect = function () {
+        console.log('connectedxxx')
+        setMyMessage(`${computationId} Session with ${partyCount} parties succesfully created! ` )
+        setHideComputeTable(false)
+    };
+
+    // eslint-disable-next-line no-undef
+    __jiff_instance = new JIFFClient(hostname, computation_id, opt);
+    // eslint-disable-next-line no-undef
+    __jiff_instance.apply_extension(jiff_restAPI);
+    __jiff_instance.connect();
+    setSavedInstanceInState(__jiff_instance)
+    return __jiff_instance;
+  };
+  
+  
+const mpcCompute = function (input, jiff_instance_) {
+    console.log('inside mpcCompute')
+    //var jiff_instance = __jiff_instance;
+    var jiff_instance = savedInstanceInState;
+    if (jiff_instance_) {
+      jiff_instance = jiff_instance_;
+    }
+    var config = myConfig;
+    // Share with compute parties
+    console.log(jiff_instance)
+    jiff_instance.share(input, null, config.compute_parties, config.input_parties);
+
+    // If this party is still connected after the compute parties are done, it will
+    // receive the result.
+    var promise = jiff_instance.receive_open(config.compute_parties);
+    promise.then(function () {
+      jiff_instance.disconnect(true, true);
+    });
+
+    return promise;
+  };
 
     const join = (url, computation_id) => {
         console.log('Connect' )
@@ -170,7 +178,8 @@ const Connect = () => {
                 var jiff = mpcConnect(hostname, computationId, options, myConfig);
                 jiff.wait_for(myConfig.compute_parties, function () {
                     console.log('Connected to the computation parties');
-                    setHideComputeTable(false)
+                    //setHideComputeTable(false)
+                    //setMyMessage(`${computationId} Session with ${partyCount} parties succesfully created! ` )
                 })
             })
             .catch(error => {
@@ -222,7 +231,7 @@ const Connect = () => {
         </CardContent>
       </Card>
       {
-            hideComputeTable ? null : <ComputeTable jiffInstance={savedInstanceInState} opt={savedOptInState} /> 
+            hideComputeTable ? null : <ComputeTable jiffInstance={savedInstanceInState} opt={savedOptInState} config={myConfig} /> 
       }
       
       
