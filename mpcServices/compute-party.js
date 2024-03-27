@@ -32,7 +32,8 @@ if (process.argv[3] != null) {
 // Initialize JIFF
 //var JIFFClient = require('../../lib/jiff-client.js');
 var JIFFClient = require('jiff-mpc/lib/jiff-client.js');
-var jiffClient = new JIFFClient('http://localhost:8080', computation_id, {
+//var jiffClient = new JIFFClient('http://localhost:8080', computation_id, {
+var jiffClient = new JIFFClient('http://jiffserver:8080', computation_id, {  
   crypto_provider: config.preprocessing === false, // comment this out if you want to use preprocessing
   party_count: config.party_count,
   initialization: {role: 'compute'} // indicate to the server that this is a compute party
