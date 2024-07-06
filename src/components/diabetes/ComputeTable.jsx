@@ -56,7 +56,8 @@ const ComputeTable = (props) => {
         //    [2, 2000]
         //]
         console.log('tableToShare: ', tableToShare)
-        jiff_instance.share(tableToShare[0][0], null, config.compute_parties, config.input_parties);
+        //jiff_instance.share(tableToShare[0][0], null, config.compute_parties, config.input_parties);
+        jiff_instance.share(tableToShare, null, config.compute_parties, config.input_parties);
 
         // If this party is still connected after the compute parties are done, it will
         // receive the result.
