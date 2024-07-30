@@ -5,7 +5,7 @@ const PageHeader = (props) =>{
     return(    
         <Header as='h2' style={{ marginTop: "30px", marginBottom: "20px" }}>
             <Icon name='money bill alternate outline' size="huge"/>
-            <Header.Content>{props.name} Loan Sharing Demo</Header.Content>
+            <Header.Content>{props.name} Loan MPC Sharing Demo</Header.Content>
             {/* <Header.Subheader>Covid Data</Header.Subheader> */}
         </Header>
     );

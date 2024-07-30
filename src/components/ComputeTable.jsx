@@ -381,7 +381,7 @@ const ComputeTable = (props) => {
         <Card fluid>
         {jsx}
         <div style={{ textAlign: 'right', marginTop: '20px', marginBottom: '20px'}}>
-            <Button primary type='submit' onClick={onSubmit}>Share</Button>
+            <Button primary type='submit' onClick={onSubmit}>Upload To MPC Service</Button>
         </div>
         </Card>
         
@@ -402,7 +402,7 @@ const ComputeTable = (props) => {
             }
             {
                 hideComputeButton ? null :
-                <Button primary type='submit' onClick={onComputeResult}>Compute Result</Button>
+                <Button primary type='submit' onClick={onComputeResult}>MPC Compute</Button>
             }    
         </Card>
         

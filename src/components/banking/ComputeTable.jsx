@@ -416,7 +416,7 @@ const ComputeTable = (props) => {
                                     
                                     <div style={{ textAlign: 'right', marginRight: '200px', marginTop: '30px' , marginBottom: '20px' }}>
                                         {
-                                            loading ? <Button loading primary>Loading</Button> : <Button primary type='submit' onClick={onSubmit}>Share</Button>
+                                            loading ? <Button loading primary>Loading</Button> : <Button primary type='submit' onClick={onSubmit}>Upload to MPC Service</Button>
                                         } 
                                     </div>
                                     <Message success header="Info:" content={myMessage} />
@@ -446,7 +446,7 @@ const ComputeTable = (props) => {
                                 onChange = {(event) => setUserId(event.target.value)}/>
                         </Form.Field>
                         <div style={{ textAlign: 'right', marginRight: '200px', marginTop: '30px' , marginBottom: '20px' }}>
-                            <Button primary type='submit' onClick={onComputeResult}>Compute Result</Button>
+                            <Button primary type='submit' onClick={onComputeResult}>MPC Compute</Button>
                         </div>
                         </Form>
                         {/* <Input style={{width: '80%', top: '10px', bottom: '30px', left: '20px', right: '20px'}}

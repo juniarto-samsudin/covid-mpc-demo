@@ -34,7 +34,7 @@ const CSVFileLoader = () => {
   return {
     jsx: (
     <div>
-      <h3>Share Data</h3>
+      <h3>Upload Data To MPC Service</h3>
       <div style={{marginTop: "20px", marginBottom: "20px"}}>
         <CSVReader onFileLoaded={handleFile} />
       </div>
